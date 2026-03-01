@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/asso-up/static/css/main.07c93e0e.css",
+    "main.js": "/asso-up/static/js/main.3757ecf4.js",
+    "index.html": "/asso-up/index.html",
+    "main.07c93e0e.css.map": "/asso-up/static/css/main.07c93e0e.css.map",
+    "main.3757ecf4.js.map": "/asso-up/static/js/main.3757ecf4.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.07c93e0e.css",
+    "static/js/main.3757ecf4.js"
+  ]
+}
