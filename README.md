@@ -2,7 +2,7 @@
 
 L'annuaire des associations du campus des Grands Moulins - Université Paris Cité.
 
-🔗 **Site en ligne** : https://tigroww.github.io/asso-up
+🔗 **Site en ligne** : https://citéuniversitaire.com
 
 ---
 
