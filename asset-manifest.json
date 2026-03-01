@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/asso-up/static/css/main.07c93e0e.css",
-    "main.js": "/asso-up/static/js/main.f8deaa39.js",
+    "main.js": "/asso-up/static/js/main.ceb718bf.js",
     "index.html": "/asso-up/index.html",
     "main.07c93e0e.css.map": "/asso-up/static/css/main.07c93e0e.css.map",
-    "main.f8deaa39.js.map": "/asso-up/static/js/main.f8deaa39.js.map"
+    "main.ceb718bf.js.map": "/asso-up/static/js/main.ceb718bf.js.map"
   },
   "entrypoints": [
     "static/css/main.07c93e0e.css",
-    "static/js/main.f8deaa39.js"
+    "static/js/main.ceb718bf.js"
   ]
 }
