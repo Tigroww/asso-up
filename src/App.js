@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import ReactGA from 'react-ga4';
 import {
   MapPin,
   ArrowRight,
@@ -262,7 +263,7 @@ const AssoDetail = ({ asso, onBack }) => (
           </div>
           <div className="flex flex-wrap gap-3">
             {asso.email && (
-              <a href={`mailto:${asso.email}`} className="px-4 py-2 bg-gray-50 rounded-xl text-gray-600 hover:text-[#8A1538] transition-colors border border-gray-100 flex items-center gap-2 font-bold text-sm">
+              <a href={`mailto:${asso.email}`} onClick={() => ReactGA.event({ category: 'Contact', action: 'Email', label: asso.name })} className="px-4 py-2 bg-gray-50 rounded-xl text-gray-600 hover:text-[#8A1538] transition-colors border border-gray-100 flex items-center gap-2 font-bold text-sm">
                 <Mail className="w-5 h-5 text-[#8A1538]" /> {asso.email}
               </a>
             )}
@@ -281,12 +282,12 @@ const AssoDetail = ({ asso, onBack }) => (
            
             <div className="flex flex-wrap gap-4">
               {asso.website && (
-                <a href={asso.website} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-6 py-3 bg-[#8A1538] text-white rounded-xl font-bold hover:bg-[#6d112d] transition-all gap-2 shadow-lg shadow-[#8A1538]/20">
+                <a href={asso.website} target="_blank" rel="noopener noreferrer" onClick={() => ReactGA.event({ category: 'External Link', action: 'Website', label: asso.name })} className="inline-flex items-center px-6 py-3 bg-[#8A1538] text-white rounded-xl font-bold hover:bg-[#6d112d] transition-all gap-2 shadow-lg shadow-[#8A1538]/20">
                   Site de l'asso <ExternalLink className="w-4 h-4" />
                 </a>
               )}
               {asso.linktree && (
-                <a href={asso.linktree} target="_blank" rel="noopener noreferrer" className="inline-flex items-center px-6 py-3 bg-[#43E860] text-gray-900 rounded-xl font-bold hover:bg-[#39c852] transition-all gap-2 shadow-lg shadow-[#43E860]/20">
+                <a href={asso.linktree} target="_blank" rel="noopener noreferrer" onClick={() => ReactGA.event({ category: 'External Link', action: 'Linktree', label: asso.name })} className="inline-flex items-center px-6 py-3 bg-[#43E860] text-gray-900 rounded-xl font-bold hover:bg-[#39c852] transition-all gap-2 shadow-lg shadow-[#43E860]/20">
                   Linktree <LinkIcon className="w-4 h-4" />
                 </a>
               )}
@@ -313,10 +314,35 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedAsso, setSelectedAsso] = useState(null);
 
+  // Initialisation Google Analytics
+  useEffect(() => {
+    ReactGA.initialize('G-SC6NH30G91');
+    ReactGA.send({ hitType: 'pageview', page: window.location.pathname });
+  }, []);
+
+  // Tracking des changements de page/onglet
+  useEffect(() => {
+    let page = '/' + activeTab;
+    if (selectedAsso) {
+      page = '/association/' + selectedAsso.id;
+    }
+    ReactGA.send({ hitType: 'pageview', page: page });
+  }, [activeTab, selectedAsso]);
+
   const filteredAssos = assos.filter(asso =>
     asso.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     asso.cat.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Fonction pour tracker les clics sur les associations
+  const trackAssoClick = (asso) => {
+    ReactGA.event({
+      category: 'Association',
+      action: 'Click',
+      label: asso.name
+    });
+    trackAssoClick(asso);
+  };
 
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900 selection:bg-[#8A1538] selection:text-white">
@@ -376,7 +402,7 @@ function App() {
                     {filteredAssos.map(asso => (
                       <div
                         key={asso.id}
-                        onClick={() => setSelectedAsso(asso)}
+                        onClick={() => trackAssoClick(asso)}
                         className="group bg-white border-2 border-gray-50 p-8 rounded-[2rem] shadow-sm hover:shadow-xl hover:border-[#8A1538]/10 transition-all cursor-pointer relative"
                       >
                         <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 group-hover:bg-[#8A1538]/5 transition-all">
@@ -401,7 +427,7 @@ function App() {
                   {assos.map(asso => (
                     <div
                       key={asso.id}
-                      onClick={() => setSelectedAsso(asso)}
+                      onClick={() => trackAssoClick(asso)}
                       className="flex items-center p-6 bg-white border-2 border-gray-50 rounded-2xl hover:border-[#8A1538]/20 hover:shadow-md cursor-pointer transition-all"
                     >
                       <div className="w-14 h-14 bg-gray-50 rounded-xl flex items-center justify-center text-2xl mr-5 shrink-0">
