@@ -2,7 +2,7 @@
 
 L'annuaire des associations du campus des Grands Moulins - Université Paris Cité.
 
-🔗 **Site en ligne** : https://stixhel.github.io/asso-up
+🔗 **Site en ligne** : https://tigroww.github.io/asso-up
 
 ---
 
@@ -28,8 +28,8 @@ git add .
 # Premier commit
 git commit -m "Initial commit"
 
-# Connecter au repo GitHub (remplace stixhel par ton vrai username)
-git remote add origin https://github.com/stixhel/asso-up.git
+# Connecter au repo GitHub (remplace tigroww par ton vrai username)
+git remote add origin https://github.com/tigroww/asso-up.git
 
 # Pousser le code
 git push -u origin main
@@ -53,7 +53,7 @@ npm run deploy
 4. Clique sur **Save**
 
 ⏱️ Attends 2-3 minutes, puis ton site sera disponible sur :
-**`https://stixhel.github.io/asso-up`**
+**`https://tigroww.github.io/asso-up`**
 
 ---
 
