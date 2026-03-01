@@ -341,7 +341,7 @@ function App() {
       action: 'Click',
       label: asso.name
     });
-    trackAssoClick(asso);
+    setSelectedAsso(asso);
   };
 
   return (
