@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigation, activateWithKeyboard } from './navigation';
 import ReactGA from 'react-ga4';
 import {
   MapPin,
@@ -173,7 +174,7 @@ const assos = [
 
 // --- Composants ---
 
-const Navbar = ({ activeTab, setActiveTab, setSelectedAsso }) => {
+const Navbar = ({ activeTab, onNavigate, selectedAsso }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
@@ -183,11 +184,13 @@ const Navbar = ({ activeTab, setActiveTab, setSelectedAsso }) => {
     { id: 'contact', label: '📩 Contact', icon: MessageSquare },
   ];
 
-  const handleNav = (id) => {
-    setActiveTab(id);
-    setSelectedAsso(null);
+  useEffect(() => {
     setIsMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [activeTab, selectedAsso]);
+
+  const handleNav = (id) => {
+    onNavigate(id);
+    setIsMenuOpen(false);
   };
 
   return (
@@ -195,7 +198,7 @@ const Navbar = ({ activeTab, setActiveTab, setSelectedAsso }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Nom de la plateforme sans logo */}
-          <div className="flex items-center cursor-pointer" onClick={() => handleNav('home')}>
+          <div className="flex items-center cursor-pointer" onClick={() => handleNav('home')} role="button" tabIndex={0} onKeyDown={activateWithKeyboard}>
             <span className="text-xl font-bold text-[#8A1538] tracking-tighter">Asso'UP</span>
           </div>
 
@@ -214,7 +217,7 @@ const Navbar = ({ activeTab, setActiveTab, setSelectedAsso }) => {
           </div>
 
           <div className="md:hidden">
-            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-500 p-2">
+            <button aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"} aria-expanded={isMenuOpen} onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-500 p-2">
               {isMenuOpen ? <X /> : <Menu />}
             </button>
           </div>
@@ -310,23 +313,24 @@ const AssoDetail = ({ asso, onBack }) => (
 // --- Main App ---
 
 function App() {
-  const [activeTab, setActiveTab] = useState('home');
+  const { route, navigate } = useNavigation(assos);
+  const activeTab = route.tab;
+  const selectedAsso = route.association;
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedAsso, setSelectedAsso] = useState(null);
+  const analyticsInitialized = useRef(false);
+  const lastTrackedPage = useRef(null);
 
-  // Initialisation Google Analytics
+  // Une seule initialisation et une seule vue par navigation, même en StrictMode.
   useEffect(() => {
-    ReactGA.initialize('G-SC6NH30G91');
-    ReactGA.send({ hitType: 'pageview', page: window.location.pathname });
-  }, []);
-
-  // Tracking des changements de page/onglet
-  useEffect(() => {
-    let page = '/' + activeTab;
-    if (selectedAsso) {
-      page = '/association/' + selectedAsso.id;
+    if (!analyticsInitialized.current) {
+      ReactGA.initialize('G-SC6NH30G91', { gaOptions: { send_page_view: false } });
+      analyticsInitialized.current = true;
     }
-    ReactGA.send({ hitType: 'pageview', page: page });
+    const page = selectedAsso ? '/association/' + selectedAsso.id : '/' + activeTab;
+    if (lastTrackedPage.current !== page) {
+      ReactGA.send({ hitType: 'pageview', page });
+      lastTrackedPage.current = page;
+    }
   }, [activeTab, selectedAsso]);
 
   const filteredAssos = assos.filter(asso =>
@@ -341,16 +345,16 @@ function App() {
       action: 'Click',
       label: asso.name
     });
-    setSelectedAsso(asso);
+    navigate(activeTab, asso);
   };
 
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900 selection:bg-[#8A1538] selection:text-white">
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} setSelectedAsso={setSelectedAsso} />
+      <Navbar activeTab={activeTab} onNavigate={navigate} selectedAsso={selectedAsso} />
 
       <main>
         {selectedAsso ? (
-          <AssoDetail asso={selectedAsso} onBack={() => setSelectedAsso(null)} />
+          <AssoDetail asso={selectedAsso} onBack={() => navigate(activeTab)} />
         ) : (
           <>
             {activeTab === 'home' && (
@@ -368,7 +372,7 @@ function App() {
                     </p>
                     <div className="flex flex-wrap justify-center gap-4">
                       <button
-                        onClick={() => setActiveTab('assos')}
+                        onClick={() => navigate('assos')}
                         className="bg-[#8A1538] text-white px-10 py-4 rounded-2xl font-black hover:bg-[#6d112d] transition-all hover:scale-105 inline-flex items-center shadow-2xl shadow-[#8A1538]/30"
                       >
                         Voir les assos <ArrowRight className="ml-2 w-6 h-6" />
@@ -389,6 +393,7 @@ function App() {
                     <div className="relative w-full md:w-96">
                       <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                       <input
+                        aria-label="Rechercher par nom ou filière"
                         type="text"
                         placeholder="Rechercher par nom ou filière..."
                         className="w-full pl-12 pr-6 py-4 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#8A1538] focus:ring-4 focus:ring-[#8A1538]/5 transition-all font-semibold"
@@ -403,6 +408,9 @@ function App() {
                       <div
                         key={asso.id}
                         onClick={() => trackAssoClick(asso)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={activateWithKeyboard}
                         className="group bg-white border-2 border-gray-50 p-8 rounded-[2rem] shadow-sm hover:shadow-xl hover:border-[#8A1538]/10 transition-all cursor-pointer relative"
                       >
                         <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 group-hover:bg-[#8A1538]/5 transition-all">
@@ -428,6 +436,9 @@ function App() {
                     <div
                       key={asso.id}
                       onClick={() => trackAssoClick(asso)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={activateWithKeyboard}
                       className="flex items-center p-6 bg-white border-2 border-gray-50 rounded-2xl hover:border-[#8A1538]/20 hover:shadow-md cursor-pointer transition-all"
                     >
                       <div className="w-14 h-14 bg-gray-50 rounded-xl flex items-center justify-center text-2xl mr-5 shrink-0">
@@ -555,9 +566,9 @@ function App() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-10 mb-8">
             <div className="text-2xl font-black text-[#8A1538] tracking-tighter">Asso'UP</div>
             <div className="flex gap-10 text-gray-400 text-sm font-bold uppercase tracking-widest">
-              <span className="cursor-pointer hover:text-[#8A1538] transition-colors" onClick={() => setActiveTab('mission')}>À propos</span>
-              <span className="cursor-pointer hover:text-[#8A1538] transition-colors" onClick={() => setActiveTab('assos')}>Annuaire</span>
-              <span className="cursor-pointer hover:text-[#8A1538] transition-colors" onClick={() => setActiveTab('contact')}>Contact</span>
+              <span className="cursor-pointer hover:text-[#8A1538] transition-colors" onClick={() => navigate('mission')} role="button" tabIndex={0} onKeyDown={activateWithKeyboard}>À propos</span>
+              <span className="cursor-pointer hover:text-[#8A1538] transition-colors" onClick={() => navigate('assos')} role="button" tabIndex={0} onKeyDown={activateWithKeyboard}>Annuaire</span>
+              <span className="cursor-pointer hover:text-[#8A1538] transition-colors" onClick={() => navigate('contact')} role="button" tabIndex={0} onKeyDown={activateWithKeyboard}>Contact</span>
             </div>
             <p className="text-gray-300 text-xs font-bold uppercase tracking-widest">© 2026 Campus Grands Moulins</p>
           </div>

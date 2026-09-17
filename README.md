@@ -2,18 +2,36 @@
 
 L'annuaire des associations du campus des Grands Moulins - Université Paris Cité.
 
-🔗 **Site en ligne** : https://citéuniversitaire.com
+🔗 **Site en ligne** : https://tigroww.github.io/asso-up/
 
 ---
 
 ## 🛠️ Développement local
 
 ```bash
+# Installer les dépendances avec Node.js 22 et npm
+npm ci
+
 # Démarrer le serveur de développement
 npm start
 ```
 
 Le site sera accessible sur http://localhost:3000
+
+## Vérification et publication
+
+```bash
+CI=true npm test -- --watchAll=false
+npm run build
+```
+
+Pour publier volontairement sur GitHub Pages : `npm run deploy`.
+Le site est publié sur la branche `gh-pages`, à l’adresse
+`https://tigroww.github.io/asso-up/`. Le champ `homepage` de `package.json`
+configure les chemins des fichiers pour ce sous-dossier GitHub Pages.
+
+Les onglets et fiches utilisent des adresses avec `#` pour permettre le partage,
+le rechargement et la navigation précédent/suivant sur GitHub Pages.
 
 ---
 

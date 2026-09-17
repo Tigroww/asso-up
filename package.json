@@ -2,7 +2,7 @@
   "name": "asso-up",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://asso-upgm.fr",
+  "homepage": "https://tigroww.github.io/asso-up",
   "dependencies": {
     "lucide-react": "^0.294.0",
     "react": "^18.2.0",
