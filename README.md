@@ -2,7 +2,7 @@
 
 L'annuaire des associations du campus des Grands Moulins - Université Paris Cité.
 
-🔗 **Site en ligne** : https://tigroww.github.io/asso-up/
+🔗 **Site en ligne** : https://asso.upgm.fr/
 
 ---
 
@@ -27,8 +27,10 @@ npm run build
 
 Pour publier volontairement sur GitHub Pages : `npm run deploy`.
 Le site est publié sur la branche `gh-pages`, à l’adresse
-`https://tigroww.github.io/asso-up/`. Le champ `homepage` de `package.json`
-configure les chemins des fichiers pour ce sous-dossier GitHub Pages.
+`https://asso.upgm.fr/`. Le champ `homepage` de `package.json` configure
+les chemins des fichiers pour ce domaine. Le fichier `public/CNAME` est copié
+dans la compilation pour conserver le domaine à chaque publication.
+Garder le fichier `CNAME` à la racine identique à `public/CNAME`.
 
 Les onglets et fiches utilisent des adresses avec `#` pour permettre le partage,
 le rechargement et la navigation précédent/suivant sur GitHub Pages.
