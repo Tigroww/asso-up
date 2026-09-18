@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.css": "/asso-up/static/css/main.9e780158.css",
-    "main.js": "/asso-up/static/js/main.a78caece.js",
-    "index.html": "/asso-up/index.html",
-    "main.9e780158.css.map": "/asso-up/static/css/main.9e780158.css.map",
-    "main.a78caece.js.map": "/asso-up/static/js/main.a78caece.js.map"
+    "main.css": "/static/css/main.9e780158.css",
+    "main.js": "/static/js/main.a78caece.js",
+    "index.html": "/index.html",
+    "main.9e780158.css.map": "/static/css/main.9e780158.css.map",
+    "main.a78caece.js.map": "/static/js/main.a78caece.js.map"
   },
   "entrypoints": [
     "static/css/main.9e780158.css",
